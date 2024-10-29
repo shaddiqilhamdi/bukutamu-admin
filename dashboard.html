@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="img/icons/Logo_pln.png" />
+
+	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
+
+	<title>Dashboard | Buku Tamu</title>
+	
+
+	<link href="css/app.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+	
+</head>
+
+<body>
+	<div class="wrapper">
+		<nav id="sidebar" class="sidebar js-sidebar">
+			<div class="sidebar-content js-simplebar">
+				<a class="sidebar-brand" href="index.html">
+          			<span class="align-middle">Buku Tamu <br><small>UID Jakarta Raya</small></span>
+       			 </a>
+
+				<ul class="sidebar-nav">
+					<li class="sidebar-header">
+						
+					</li>
+
+					<li class="sidebar-item active">
+						<a class="sidebar-link" href="dashboard.html">
+              				<i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+           				 </a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="bukutamu.html">
+              				<i class="align-middle" data-feather="user"></i> <span class="align-middle">Buku Tamu</span>
+            			</a>
+					</li>
+
+					
+					<li class="sidebar-header">
+						Komponen
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="pegawai.html">
+              				<i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Pegawai</span>
+            			</a>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="jabatan.html">
+              				<i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Jabatan</span>
+            			</a>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="bidang.html">
+              				<i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Bidang</span>
+            			</a>
+					</li>
+
+					
+					<li class="sidebar-header">
+						Manajemen User
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="user.html">
+              				<i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">User</span>
+           				 </a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="userlog.html">
+              				<i class="align-middle" data-feather="map"></i> <span class="align-middle">User Log</span>
+           				 </a>
+					</li>
+				</ul>
+
+				
+			</div>
+		</nav>
+
+		<div class="main">
+			<nav class="navbar navbar-expand navbar-light navbar-bg">
+				<a class="sidebar-toggle js-sidebar-toggle">
+          			<i class="hamburger align-self-center"></i>
+        		</a>
+				<div class="navbar-collapse collapse">
+					<ul class="navbar-nav navbar-align">
+						<li class="nav-item dropdown">
+							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                				<i class="align-middle" data-feather="settings"></i>
+              				</a>
+
+							  <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+								<img src="img/avatars/avatar_user.png" class="avatar img-fluid rounded me-1" alt="User_Avatar" />
+								<span class="text-dark" id="userNameDisplay">Loading...</span>
+							</a>
+							
+							<div class="dropdown-menu dropdown-menu-end">
+								<a class="dropdown-item" href="page/profil.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="#" id="logoutLink">Log out</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			
+
+			<main class="content">
+				<div class="container-fluid p-0">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Total</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="bar-chart"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h1 class="mt-1 mb-3" id="totalTamuBulanIni">0</h1>
+                                    <div class="mb-0">
+                                        <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i></span>
+                                        <span class="text-muted" id="persentaseBulan">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Rata-rata</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="users"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h1 class="mt-1 mb-3" id="rataRataPerHari">0</h1>
+                                    <div class="mb-0">
+                                        <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i></span>
+                                        <span class="text-muted" id="persentaseRataRata">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Hari Ini</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="users"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h1 class="mt-1 mb-3" id="tamuHariIni">0</h1>
+                                    <div class="mb-0">
+                                        <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i></span>
+                                        <span class="text-muted" id="persentaseHari">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Tamu Aktif</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="user-check"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h1 class="mt-1 mb-3" id="totalTamuAktif">0</h1>
+                                    <div class="mb-0 display-none">
+                                        <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i></span>
+                                        <span class="text-muted">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Statistik Kunjungan</h5>
+								</div>
+								<div class="card-body py-3">
+									<div class="chart chart-sm">
+										<canvas id="chartKunjunganBulanan"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+                    </div>
+                </div>
+			</main>
+
+			<footer class="footer">
+				<div class="container-fluid">
+					<div class="row text-muted">
+						<div class="col-6 text-start">
+							<p class="mb-0">
+								<a class="text-muted" ><strong>2024</strong></a> - <a class="text-muted" href="#" target="_blank"><strong>PLN UID Jakarta Raya</strong></a>								&copy;
+							</p>
+						</div>
+						<div class="col-6 text-end">
+							<ul class="list-inline">
+								<li class="list-inline-item">
+									<a class="text-muted" href="https://bit.ly/4f6rKNp" target="_blank">Support</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+	<script src="js/auth.js" defer></script>
+	<script src="js/dashboard.js"></script>
+	<script src="js/app.js"></script>	
+</body>
+</html>
