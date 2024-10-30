@@ -12,11 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Fungsi untuk menghitung persentase kenaikan/penurunan
+// Fungsi menghitung persentase perubahan dan mengubah warna teks
 function calculatePercentageChange(current, previous) {
     if (previous === 0) return current > 0 ? '∞%' : '0%'; // Hindari pembagian dengan 0
     const change = ((current - previous) / previous) * 100;
-    return change.toFixed(2) + '%'; // Batasi 2 angka desimal
+    return change.toFixed(0); // Batasi 2 angka desimal
+}
+
+// Fungsi untuk memperbarui elemen dengan nilai dan warna dinamis
+function updateElementWithColor(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.innerText = `${value}%`; // Tampilkan nilai dengan simbol persen
+
+        // Tentukan warna berdasarkan nilai
+        if (parseFloat(value) > 0) {
+            element.style.color = 'green'; // Hijau untuk nilai positif
+        } else if (parseFloat(value) < 0) {
+            element.style.color = 'red'; // Merah untuk nilai negatif
+        } else {
+            element.style.color = 'black'; // Hitam untuk nol
+        }
+    }
 }
 
 async function fetchSummaryData() {
@@ -37,13 +54,14 @@ async function fetchSummaryData() {
                 }
             };
 
+            // Perbarui data utama
             updateElement('totalTamuBulanIni', message.totalTamuBulanIni);
             updateElement('rataRataPerHari', message.rataRataPerhari);
             updateElement('tamuHariIni', message.tamuHariIni);
             updateElement('totalTamuAktif', message.tamuAktifHariIni);
 
-             // Hitung dan tampilkan persentase kenaikan
-             const persentaseBulan = calculatePercentageChange(
+            // Hitung dan tampilkan persentase kenaikan/penurunan dengan warna dinamis
+            const persentaseBulan = calculatePercentageChange(
                 message.totalTamuBulanIni,
                 message.totalTamuBulanLalu
             );
@@ -56,17 +74,17 @@ async function fetchSummaryData() {
                 message.tamuHariLalu
             );
 
-            updateElement('persentaseBulan', persentaseBulan);
-            updateElement('persentaseRataRata', persentaseRataRataPerHari);
-            updateElement('persentaseHari', persentaseHariIni);
+            // Update elemen dengan warna dinamis
+            updateElementWithColor('persentaseBulan', persentaseBulan);
+            updateElementWithColor('persentaseRataRata', persentaseRataRataPerHari);
+            updateElementWithColor('persentaseHari', persentaseHariIni);
 
-
+            // Render chart jika data tersedia
             if (message.chartData) {
                 const labels = message.chartData.map(entry => {
                     const date = new Date(entry.date);
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
                     const day = String(date.getDate()).padStart(2, '0');
-                    return `${day}`; // Format MMDD
+                    return `${day}`; // Format hari
                 });
 
                 const dataSet = message.chartData.map(entry => entry.value);
