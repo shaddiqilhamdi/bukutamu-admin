@@ -136,7 +136,7 @@
 						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
 							<div class="card flex-fill w-100 " style="padding: 10px 20px;">
 								<div class="card-header">
-									<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formBidang">+ Tambah Bidang</a>
+									<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formBidang" data-mode="create">+ Tambah Bidang</a>
 								</div>
 								<table class="table table-striped table-bordered display nowrap" id="tabelBidang" style="width: 100%;">
 								</table>
@@ -203,15 +203,19 @@
 	<script src="js/auth.js" defer></script>
 
 	<script>
-		$(document).ready(function (){
-			$('#tabelBidang').DataTable({
+		const token = localStorage.getItem('authToken');
+		let table;
+	
+		$(document).ready(function () {
+			// Inisialisasi DataTable
+			table = $('#tabelBidang').DataTable({
 				ajax: {
-					url: `https://script.google.com/macros/s/AKfycbyzIE2e6J1KXWu-Uzs_1yx0JtmasuTXlir_8yerXn-dl13ZqEagoOxzpB2ZvB5X09zP1w/exec?type=bidang&action=read`,
+					url: `${scriptURL}?type=bidang&token=${token}`,
 					dataSrc: 'data'
 				},
 				columns: [
-					{ title: "No.", data: null, width:"5%", render: (data, type, row, meta) => meta.row + 1 },
-            		{ title: "Bidang", data: "bidang"  },
+					{ title: "No.", data: null, width: "5%", render: (data, type, row, meta) => meta.row + 1 },
+					{ title: "Bidang", data: "bidang" },
 					{
 						title: "Aksi",
 						data: null,
@@ -219,7 +223,7 @@
 						className: "text-center",
 						render: function (data, type, row) {
 							return `
-								<button class="btn btn-sm btn-warning btn-edit" data-id="${row.id}" data-jabatan="${row.jabatan}">
+								<button class="btn btn-sm btn-warning btn-edit" data-id="${row.id}" data-bidang="${row.bidang}">
 									<i class="bi bi-pencil-square"></i>
 								</button>
 								<button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}">
@@ -228,10 +232,142 @@
 						}
 					}
 				],
-				renponsive: true,
+				responsive: true,
 				rowId: 'id'
 			});
 		});
+	
+		// Event listener untuk tombol "Tambah"
+		document.querySelector('[data-bs-target="#formBidang"]').addEventListener('click', function () {
+			document.getElementById('formBidang').setAttribute('data-mode', 'create');
+			document.getElementById('formBidang').removeAttribute('data-id');
+			const form = document.getElementById('formBidang');
+			if (form) {
+				form.querySelectorAll('input, textarea, select').forEach(input => {
+					input.value = '';
+    			});
+			}
+		});
+
+			
+		// Event listener untuk tombol "Edit"
+		$('#tabelBidang').on('click', '.btn-edit', function () {
+			const id = $(this).data('id');
+			const bidang = $(this).data('bidang');
+	
+			// Isi form dengan data yang dipilih
+			document.getElementById('bidang').value = bidang;
+			document.getElementById('formBidang').setAttribute('data-mode', 'edit');
+			document.getElementById('formBidang').setAttribute('data-id', id);
+	
+			$('#formBidang').modal('show');
+		});
+	
+		// Event listener untuk tombol "Delete"
+		$('#tabelBidang').on('click', '.btn-delete', function () {
+			const id = $(this).data('id');
+	
+			Swal.fire({
+				title: 'Yakin ingin menghapus?',
+				text: 'Data ini tidak bisa dikembalikan!',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Ya, Hapus!',
+				cancelButtonText: 'Batal'
+			}).then(async (result) => {
+				if (result.isConfirmed) {
+					showLoading();
+	
+					const data = new URLSearchParams({
+						type: 'bidang',
+						action: 'delete',
+						id: id,
+						token: token
+					});
+	
+					try {
+						const response = await fetch(scriptURL, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+							body: data.toString()
+						});
+	
+						const textResult = await response.text();
+						let result;
+	
+						try {
+							result = JSON.parse(textResult);
+						} catch (err) {
+							Swal.close();
+							console.error('Invalid JSON response:', textResult);
+							Swal.fire('Error!', 'Respons dari server tidak valid.', 'error');
+							return;
+						}
+	
+						if (response.ok && result.success) {
+							Swal.fire('Deleted!', 'Data berhasil dihapus.', 'success');
+							table.ajax.reload(); // Reload data di tabel
+						} else {
+							throw new Error(result.message || "Gagal menghapus data");
+						}
+					} catch (error) {
+						Swal.close();
+						console.error('Error deleting data:', error.message);
+						Swal.fire('Error!', 'Terjadi kesalahan saat menghapus data: ' + error.message, 'error');
+					}
+				}
+			});
+		});
+	
+		// Form submit handler
+		document.getElementById("formBidang").addEventListener('submit', async function (e) {
+			e.preventDefault();
+			const bidang = document.getElementById('bidang').value;
+			const mode = this.getAttribute('data-mode');
+			const id = this.getAttribute('data-id');
+			const action = mode === 'edit' ? 'update' : 'create';
+	
+			if (!bidang) {
+				Swal.fire('Error!', 'Semua field wajib diisi!', 'error');
+				return;
+			}
+	
+			showLoading();
+	
+			const data = new URLSearchParams({ type: 'bidang', action: action, bidang: bidang, token: token });
+			if (mode === 'edit') data.append('id', id);
+	
+			try {
+				const response = await fetch(scriptURL, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: data.toString()
+				});
+	
+				const result = await response.json();
+				if (response.ok && result.success) {
+					Swal.fire('Success!', result.message, 'success');
+					$('#formBidang').modal('hide');
+					table.ajax.reload(); // Reload data di tabel
+				} else {
+					throw new Error(result.message || "Gagal memproses permintaan");
+				}
+			} catch (error) {
+				Swal.fire('Error!', 'Terjadi kesalahan saat mengirim data: ' + error.message, 'error');
+			}
+		});
+	
+		// Fungsi untuk menampilkan loading
+		function showLoading() {
+			Swal.fire({
+				title: 'Mohon tunggu...',
+				html: 'Sedang memproses permintaan Anda',
+				allowOutsideClick: false,
+				didOpen: () => {
+					Swal.showLoading();
+				}
+			});
+		}
 	</script>
 		
 </body>
